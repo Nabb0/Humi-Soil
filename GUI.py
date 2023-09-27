@@ -54,7 +54,7 @@ def get_weather(city):
 def map_weather_status_to_image(status):
     # Aggiungi qui le tue mappature tra stati del tempo e percorsi delle immagini
     # Ad esempio:
-    if "clear sky" in status.lower():
+    if "clear" in status.lower():
         return "Immagini Meteo\clear sky.png"
     elif "overcast_clouds" in status.lower():
         return "Immagini Meteo\overcast_clouds.png"
@@ -97,7 +97,7 @@ label = tk.Label(root)
 label.pack()
 
 # Organizzazione dei widget nella finestra
-get_weather("Milan")  # Chiamata iniziale per ottenere i dati meteo di Milano
+get_weather("Southampton,US")  # Chiamata iniziale per ottenere i dati meteo di Milano
 
 # Avvia il loop principale di Tkinter
 root.mainloop()
