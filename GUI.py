@@ -1,11 +1,15 @@
 import tkinter as tk
 import pyowm
 from datetime import datetime, timedelta
+from tkinter import PhotoImage
+from PIL import Image, ImageTk
 
 # Crea una finestra Tkinter
 root = tk.Tk()
 root.title("App Meteo con Tkinter")
 
+
+#
 # Impostare le dimensioni della finestra
 larghezza_finestra = 1000  # Larghezza in pixel
 altezza_finestra = 800  # Altezza in pixel
@@ -56,6 +60,18 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 
 # Organizzazione dei widget nella finestra
 get_weather("Milano")  # Chiamata iniziale per ottenere i dati meteo di Milano
+
+
+# Carica l'immagine utilizzando PIL
+image = Image.open("Immagini Meteo\clear sky.png")
+
+# Converte l'immagine in un formato compatibile con Tkinter
+tk_image = ImageTk.PhotoImage(image)
+
+# Crea un widget Label per visualizzare l'immagine
+label = tk.Label(root, image=tk_image)
+label.pack()
+
 
 # Avvia il loop principale di Tkinter
 root.mainloop()
