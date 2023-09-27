@@ -54,14 +54,24 @@ def get_weather(city):
 def map_weather_status_to_image(status):
     # Aggiungi qui le tue mappature tra stati del tempo e percorsi delle immagini
     # Ad esempio:
-    if "clear" in status.lower():
+    if "clear sky" in status.lower():
         return "Immagini Meteo\clear sky.png"
-    elif "cloud" in status.lower():
+    elif "overcast_clouds" in status.lower():
         return "Immagini Meteo\overcast_clouds.png"
     elif "rain" in status.lower():
         return "Immagini Meteo\rain.png"
+    elif "snow" in status.lower():
+        return "Immagini Meteo\snow.png"
+    elif "shower rain" in status.lower():
+        return "Immagini Meteo\shower rain.png"
+    elif "thunderstorm" in status.lower():
+        return "Immagini Meteo\thunderstorm.png"
+    elif "overcast_clouds" in status.lower():
+        return "Immagini Meteo\overcast_clouds.png"
+    elif "mist" in status.lower():
+        return "Immagini Meteo\mist.png"
     else:
-        return "Immagini Meteo/default.png"
+        return ".\Immagini Meteo\drizzle.png"
 
 # Creazione dei widget
 frame1 = tk.Frame(root, bg="lightblue")
