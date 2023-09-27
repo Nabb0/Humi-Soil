@@ -1,21 +1,18 @@
 import tkinter as tk
 import pyowm
 from datetime import datetime, timedelta
-from tkinter import PhotoImage
 from PIL import Image, ImageTk
 
 # Crea una finestra Tkinter
 root = tk.Tk()
 root.title("App Meteo con Tkinter")
 
-
-#
-# Impostare le dimensioni della finestra
-larghezza_finestra = 1000  # Larghezza in pixel
-altezza_finestra = 800  # Altezza in pixel
+# Imposta le dimensioni della finestra
+larghezza_finestra = 1000
+altezza_finestra = 800
 root.geometry(f"{larghezza_finestra}x{altezza_finestra}")
 
-# Funzione per ottenere le informazioni meteo di una città
+# Funzione per ottenere le informazioni meteo di una città e mostrare l'immagine corrispondente allo stato del tempo
 def get_weather(city):
     owm = pyowm.OWM('2de7c19ab75bb0d7182f2a46cea6859a')  # Inserisci qui la tua chiave API di OpenWeatherMap
 
@@ -25,8 +22,22 @@ def get_weather(city):
         weather = observation.weather
         temperature = weather.temperature('celsius')['temp']
         status = weather.status
+        print(status)
 
         frame1_label.config(text=f"{city}\nTemperature: {temperature}°C\nStatus: {status}")
+
+        # Mappa lo stato del tempo a un percorso di immagine
+        image_path = map_weather_status_to_image(status)
+
+        # Carica l'immagine utilizzando PIL
+        image = Image.open(image_path)
+
+        # Converte l'immagine in un formato compatibile con Tkinter
+        tk_image = ImageTk.PhotoImage(image)
+
+        # Aggiorna l'immagine nel widget Label
+        label.config(image=tk_image)
+        label.image = tk_image
 
         # Ottenere le previsioni per oggi
         forecast = mgr.forecast_at_place(city, '3h')
@@ -38,6 +49,19 @@ def get_weather(city):
         frame2_label.config(text=f"{city}\nTemperature Forecast Today: {temperature_forecast}°C")
     except Exception as e:
         frame1_label.config(text=f"Error: {e}")
+
+# Funzione per mappare lo stato del tempo a un percorso di immagine
+def map_weather_status_to_image(status):
+    # Aggiungi qui le tue mappature tra stati del tempo e percorsi delle immagini
+    # Ad esempio:
+    if "clear" in status.lower():
+        return "Immagini Meteo\clear sky.png"
+    elif "cloud" in status.lower():
+        return "Immagini Meteo\overcast_clouds.png"
+    elif "rain" in status.lower():
+        return "Immagini Meteo\rain.png"
+    else:
+        return "Immagini Meteo/default.png"
 
 # Creazione dei widget
 frame1 = tk.Frame(root, bg="lightblue")
@@ -58,20 +82,12 @@ frame3.place(relx=0, rely=0.5, relwidth=0.5, relheight=0.5)
 frame4 = tk.Frame(root, bg="orange")
 frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 
-# Organizzazione dei widget nella finestra
-get_weather("Milano")  # Chiamata iniziale per ottenere i dati meteo di Milano
-
-
-# Carica l'immagine utilizzando PIL
-image = Image.open("Immagini Meteo\clear sky.png")
-
-# Converte l'immagine in un formato compatibile con Tkinter
-tk_image = ImageTk.PhotoImage(image)
-
-# Crea un widget Label per visualizzare l'immagine
-label = tk.Label(root, image=tk_image)
+# Crea un widget Label per visualizzare l'immagine meteo
+label = tk.Label(root)
 label.pack()
 
+# Organizzazione dei widget nella finestra
+get_weather("Milan")  # Chiamata iniziale per ottenere i dati meteo di Milano
 
 # Avvia il loop principale di Tkinter
 root.mainloop()
