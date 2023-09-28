@@ -13,7 +13,7 @@ GPIO.setup(18, GPIO.OUT)
 
 def generate_and_save_random_number_with_time():
     random_number = random.randint(1, 10)
-    current_time = datatime.datetime.now()
+    current_time = datatime.now()
     
     # Formatta l'orario nel formato desiderato, ad esempio "2023-09-28 14:30:00"
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
