@@ -53,6 +53,7 @@ def get_weather(city):
         print(status)
 
         frame1_label.config(text=f"{city}\nTemperature: {temperature}°C\nStatus: {status}")
+        frame1_label.place(relx=0.5,rely=0.5,anchor='center')
 
         # Mappa lo stato del tempo a un percorso di immagine
         image_path = map_weather_status_to_image(status)
@@ -81,6 +82,7 @@ def get_weather(city):
         temperature_forecast = weather_forecast.temperature('celsius')['temp']
 
         frame2_label.config(text=f"{city}\nTemperature Forecast Today: {temperature_forecast}°C")
+        frame2_label.place(relx=0.5,rely=0.5,anchor='center')
     except Exception as e:
         frame1_label.config(text=f"Error: {e}")
 
@@ -129,6 +131,7 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 # Crea un widget Label per visualizzare l'immagine meteo
 label = tk.Label(root)
 label.pack()
+label.place(relx=0.25,rely=0.16,anchor='center')
 
 # Crea un pulsante Tkinter per generare il numero casuale con l'orario
 random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_and_save_random_number_with_time)
