@@ -13,10 +13,11 @@ GPIO.setup(18, GPIO.OUT)
 
 def generate_and_save_random_number_with_time():
     random_number = random.randint(1, 10)
-    current_time = datetime.datetime.now()
+    current_time = datatime.datetime.now()
     
     # Formatta l'orario nel formato desiderato, ad esempio "2023-09-28 14:30:00"
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    file_path = "/home/pi/Desktop/Humi-Soil-main/numeri_casuali.txt"
     
     # Scrive il numero casuale e l'orario nel file
     with open("numeri_casuali.txt", "a") as file:
@@ -65,7 +66,7 @@ def get_weather(city):
         label.image = tk_image
 
         # Carica l'immagine locale
-        local_image = Image.open("mio_immagine.png")
+        local_image = Image.open("/home/pi/Desktop/Humi-Soil-main/Documentazione/Logo.png")
         local_tk_image = ImageTk.PhotoImage(local_image)
 
         # Crea un widget Label per visualizzare l'immagine locale
@@ -89,7 +90,7 @@ def map_weather_status_to_image(status):
     # Ad esempio:
     if "clear" in status.lower():
         return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/clear sky.png"
-    elif "overcast_clouds" in status.lower():
+    elif "clouds" in status.lower():
         return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/overcast_clouds.png"
     elif "rain" in status.lower():
         return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/rain.png"
