@@ -27,6 +27,7 @@ def generate_and_save_random_number():
     else:
         print("LED off")
         GPIO.output(18, GPIO.LOW)
+
 # Crea una finestra Tkinter
 root = tk.Tk()
 root.title("App Meteo con Tkinter")
@@ -53,15 +54,21 @@ def get_weather(city):
         # Mappa lo stato del tempo a un percorso di immagine
         image_path = map_weather_status_to_image(status)
 
-        # Carica l'immagine utilizzando PIL
+        # Carica l'immagine meteo utilizzando PIL
         image = Image.open(image_path)
-
-        # Converte l'immagine in un formato compatibile con Tkinter
         tk_image = ImageTk.PhotoImage(image)
 
-        # Aggiorna l'immagine nel widget Label
+        # Aggiorna l'immagine meteo nel widget Label
         label.config(image=tk_image)
         label.image = tk_image
+
+        # Carica l'immagine locale
+        local_image = Image.open("mio_immagine.png")
+        local_tk_image = ImageTk.PhotoImage(local_image)
+
+        # Crea un widget Label per visualizzare l'immagine locale
+        local_image_label = tk.Label(root, image=local_tk_image)
+        local_image_label.pack()
 
         # Ottenere le previsioni per oggi
         forecast = mgr.forecast_at_place(city, '3h')
