@@ -1,7 +1,35 @@
+import RPi.GPIO as GPIO
+import time
+import random
 import tkinter as tk
 import pyowm
 from datetime import datetime, timedelta
 from PIL import Image, ImageTk
+
+# Configura i pin GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(18, GPIO.OUT)
+
+def generate_and_save_random_number_with_time():
+    random_number = random.randint(1, 10)
+    current_time = datetime.now()
+    
+    # Formatta l'orario nel formato desiderato, ad esempio "2023-09-28 14:30:00"
+    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    file_path = "/home/pi/Desktop/Humi-Soil-main/numeri_casuali.txt"
+    
+    # Scrive il numero casuale e l'orario nel file
+    with open("numeri_casuali.txt", "a") as file:
+        file.write(f"{formatted_time}: {random_number}\n")
+    
+    # Controlla se il numero è pari o dispari e controlla il LED
+    if random_number % 2 == 0:
+        print("LED on")
+        GPIO.output(18, GPIO.HIGH)
+    else:
+        print("LED off")
+        GPIO.output(18, GPIO.LOW)
 
 # Crea una finestra Tkinter
 root = tk.Tk()
@@ -30,15 +58,22 @@ def get_weather(city):
         # Mappa lo stato del tempo a un percorso di immagine
         image_path = map_weather_status_to_image(status)
 
-        # Carica l'immagine utilizzando PIL
+        # Carica l'immagine meteo utilizzando PIL
         image = Image.open(image_path)
-
-        # Converte l'immagine in un formato compatibile con Tkinter
         tk_image = ImageTk.PhotoImage(image)
 
-        # Aggiorna l'immagine nel widget Label
+        # Aggiorna l'immagine meteo nel widget Label
         label.config(image=tk_image)
         label.image = tk_image
+
+        # Carica l'immagine locale
+        local_image = Image.open("/home/pi/Desktop/Humi-Soil-main/Documentazione/Logo.png")
+        local_tk_image = ImageTk.PhotoImage(local_image)
+
+        # Crea un widget Label per visualizzare l'immagine locale
+        local_image_label = tk.Label(root, image=local_tk_image)
+        local_image_label.pack()
+        
 
         # Ottenere le previsioni per oggi
         forecast = mgr.forecast_at_place(city, '3h')
@@ -57,23 +92,23 @@ def map_weather_status_to_image(status):
     # Aggiungi qui le tue mappature tra stati del tempo e percorsi delle immagini
     # Ad esempio:
     if "clear" in status.lower():
-        return "Immagini Meteo\clear sky.png"
-    elif "overcast_clouds" in status.lower():
-        return "Immagini Meteo\overcast_clouds.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/clear sky.png"
+    elif "clouds" in status.lower():
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/overcast_clouds.png"
     elif "rain" in status.lower():
-        return "Immagini Meteo\rain.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/rain.png"
     elif "snow" in status.lower():
-        return "Immagini Meteo\snow.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/snow.png"
     elif "shower rain" in status.lower():
-        return "Immagini Meteo\shower rain.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/shower rain.png"
     elif "thunderstorm" in status.lower():
-        return "Immagini Meteo\thunderstorm.png"
-    elif "overcast_clouds" in status.lower():
-        return "Immagini Meteo\overcast_clouds.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/thunderstorm.png"
+    elif "Few_Clouds" in status.lower():
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/Few_Clouds.png"
     elif "mist" in status.lower():
-        return "Immagini Meteo\mist.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/mist.png"
     else:
-        return ".\Immagini Meteo\drizzle.png"
+        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/drizzle.png"
 
 # Creazione dei widget
 frame1 = tk.Frame(root, bg="lightblue")
@@ -98,6 +133,10 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 label = tk.Label(root)
 label.pack()
 label.place(relx=0.25,rely=0.16,anchor='center')
+
+# Crea un pulsante Tkinter per generare il numero casuale con l'orario
+random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_and_save_random_number_with_time)
+random_button.pack()
 
 
 # Organizzazione dei widget nella finestra
