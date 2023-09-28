@@ -25,6 +25,7 @@ def get_weather(city):
         print(status)
 
         frame1_label.config(text=f"{city}\nTemperature: {temperature}°C\nStatus: {status}")
+        frame1_label.place(relx=0.5,rely=0.5,anchor='center')
 
         # Mappa lo stato del tempo a un percorso di immagine
         image_path = map_weather_status_to_image(status)
@@ -47,6 +48,7 @@ def get_weather(city):
         temperature_forecast = weather_forecast.temperature('celsius')['temp']
 
         frame2_label.config(text=f"{city}\nTemperature Forecast Today: {temperature_forecast}°C")
+        frame2_label.place(relx=0.5,rely=0.5,anchor='center')
     except Exception as e:
         frame1_label.config(text=f"Error: {e}")
 
@@ -55,23 +57,23 @@ def map_weather_status_to_image(status):
     # Aggiungi qui le tue mappature tra stati del tempo e percorsi delle immagini
     # Ad esempio:
     if "clear" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/clear sky.png"
+        return "Immagini Meteo\clear sky.png"
     elif "overcast_clouds" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/overcast_clouds.png"
+        return "Immagini Meteo\overcast_clouds.png"
     elif "rain" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/rain.png"
+        return "Immagini Meteo\rain.png"
     elif "snow" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/snow.png"
+        return "Immagini Meteo\snow.png"
     elif "shower rain" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/shower rain.png"
+        return "Immagini Meteo\shower rain.png"
     elif "thunderstorm" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/thunderstorm.png"
-    elif "Few_Clouds" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/Few_Clouds.png"
+        return "Immagini Meteo\thunderstorm.png"
+    elif "overcast_clouds" in status.lower():
+        return "Immagini Meteo\overcast_clouds.png"
     elif "mist" in status.lower():
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/mist.png"
+        return "Immagini Meteo\mist.png"
     else:
-        return "/home/pi/Desktop/Humi-Soil-main/Immagini Meteo/drizzle.png"
+        return ".\Immagini Meteo\drizzle.png"
 
 # Creazione dei widget
 frame1 = tk.Frame(root, bg="lightblue")
@@ -95,10 +97,11 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 # Crea un widget Label per visualizzare l'immagine meteo
 label = tk.Label(root)
 label.pack()
+label.place(relx=0.25,rely=0.16,anchor='center')
+
 
 # Organizzazione dei widget nella finestra
 get_weather("Milan")  # Chiamata iniziale per ottenere i dati meteo di Milano
 
 # Avvia il loop principale di Tkinter
 root.mainloop()
-
