@@ -31,6 +31,15 @@ def generate_and_save_random_number_with_time():
         print("LED off")
         GPIO.output(18, GPIO.LOW)
 
+    try:
+        with open("numeri_casuali.txt", "r") as file:
+            content = file.read()
+            text_box.delete(1.0, tk.END)
+            text_box.insert(tk.END, content)
+    except FileNotFoundError:
+        text_box.delete(1.0, tk.END)
+        text_box.insert(tk.END, "File not found")
+
 # Crea una finestra Tkinter
 root = tk.Tk()
 root.title("App Meteo con Tkinter")
@@ -137,6 +146,11 @@ label.place(relx=0.25,rely=0.16,anchor='center')
 # Crea un pulsante Tkinter per generare il numero casuale con l'orario
 random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_and_save_random_number_with_time)
 random_button.pack()
+
+
+# Crea un widget Text per visualizzare il contenuto del file
+text_box = tk.Text(root)
+text_box.pack()
 
 
 # Organizzazione dei widget nella finestra
