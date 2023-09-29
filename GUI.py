@@ -31,12 +31,18 @@ def generate_and_save_random_number_with_time():
         print("LED off")
         GPIO.output(18, GPIO.LOW)
 
-    try:
+   try:
         with open("numeri_casuali.txt", "r") as file:
             content = file.read()
-            label.config(text=content)
+            text_box.config(state=tk.NORMAL)
+            text_box.delete(1.0, tk.END)
+            text_box.insert(tk.END, content)
+            text_box.config(state=tk.DISABLED)
     except FileNotFoundError:
-        label.config(text="File not found")
+        text_box.config(state=tk.NORMAL)
+        text_box.delete(1.0, tk.END)
+        text_box.insert(tk.END, "File not found")
+        text_box.config(state=tk.DISABLED)
 
 # Crea una finestra Tkinter
 root = tk.Tk()
@@ -146,9 +152,16 @@ random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_a
 random_button.pack()
 
 
-# Crea una label per visualizzare il contenuto del file
-label = tk.Label(root, text="")
-label.pack()
+# Crea una scrollbar
+scrollbar = tk.Scrollbar(root)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+# Crea un widget Text per visualizzare il contenuto del file
+text_box = tk.Text(root, yscrollcommand=scrollbar.set)
+text_box.pack()
+
+# Configura la scrollbar
+scrollbar.config(command=text_box.yview)
 
 
 
