@@ -9,7 +9,7 @@ from PIL import Image, ImageTk
 # Configura i pin GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(18, GPIO.OUT)
+GPIO.setup(18, GPIO.OUT,initial=GPIO.LOW)
 
 def generate_and_save_random_number_with_time():
     random_number = random.randint(1, 10)
@@ -30,19 +30,12 @@ def generate_and_save_random_number_with_time():
     else:
         print("LED off")
         GPIO.output(18, GPIO.LOW)
-
-   try:
+    try:
         with open("numeri_casuali.txt", "r") as file:
             content = file.read()
-            text_box.config(state=tk.NORMAL)
-            text_box.delete(1.0, tk.END)
-            text_box.insert(tk.END, content)
-            text_box.config(state=tk.DISABLED)
+            label_history.config(text=content)
     except FileNotFoundError:
-        text_box.config(state=tk.NORMAL)
-        text_box.delete(1.0, tk.END)
-        text_box.insert(tk.END, "File not found")
-        text_box.config(state=tk.DISABLED)
+        label_history.config(text="File not found")
 
 # Crea una finestra Tkinter
 root = tk.Tk()
@@ -55,18 +48,18 @@ root.geometry(f"{larghezza_finestra}x{altezza_finestra}")
 
 # Funzione per ottenere le informazioni meteo di una città e mostrare l'immagine corrispondente allo stato del tempo
 def get_weather(city):
-    owm = pyowm.OWM('2de7c19ab75bb0d7182f2a46cea6859a')  # Inserisci qui la tua chiave API di OpenWeatherMap
+    owm = pyowm.OWM('2de7c19ab75bb0d7182f2a46cea6859a')
 
     try:
         mgr = owm.weather_manager()
         observation = mgr.weather_at_place(city)
         weather = observation.weather
         temperature = weather.temperature('celsius')['temp']
+        humidity = weather.humidity
         status = weather.status
-        print(status)
 
-        frame1_label.config(text=f"{city}\nTemperature: {temperature}°C\nStatus: {status}")
-        frame1_label.place(relx=0.5,rely=0.5,anchor='center')
+        frame1_label.config(text=f"{city}\nTemperature: {temperature}°C\nHumidity: {humidity}%\nStatus: {status}")
+        frame1_label.place(relx=0.5, rely=0.5, anchor='center')
 
         # Mappa lo stato del tempo a un percorso di immagine
         image_path = map_weather_status_to_image(status)
@@ -79,24 +72,28 @@ def get_weather(city):
         label.config(image=tk_image)
         label.image = tk_image
 
-        # Carica l'immagine locale
-        local_image = Image.open("/home/pi/Desktop/Humi-Soil-main/Documentazione/Logo.png")
-        local_tk_image = ImageTk.PhotoImage(local_image)
-
-        # Crea un widget Label per visualizzare l'immagine locale
-        local_image_label = tk.Label(root, image=local_tk_image)
-        local_image_label.pack()
-        
-
         # Ottenere le previsioni per oggi
         forecast = mgr.forecast_at_place(city, '3h')
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         tomorrow = today + timedelta(days=1)
         weather_forecast = forecast.get_weather_at(tomorrow)
         temperature_forecast = weather_forecast.temperature('celsius')['temp']
+        status_forecast = weather_forecast.status
 
-        frame2_label.config(text=f"{city}\nTemperature Forecast Today: {temperature_forecast}°C")
-        frame2_label.place(relx=0.5,rely=0.5,anchor='center')
+        frame2_label.config(text=f"{city}\nTemperature Forecast Today: {temperature_forecast}°C\nForecast Status: {status_forecast}")
+        frame2_label.place(relx=0.5, rely=0.5, anchor='center')
+
+        # Mappa lo stato del forecast a un percorso di immagine
+        image_path_forecast = map_weather_status_to_image(status_forecast)
+
+        # Carica l'immagine meteo del forecast utilizzando PIL
+        image_forecast = Image.open(image_path_forecast)
+        tk_image_forecast = ImageTk.PhotoImage(image_forecast)
+
+        # Aggiorna l'immagine meteo del forecast nel widget Label
+        label_forecast.config(image=tk_image_forecast)
+        label_forecast.image = tk_image_forecast
+
     except Exception as e:
         frame1_label.config(text=f"Error: {e}")
 
@@ -136,7 +133,7 @@ frame2.place(relx=0.5, rely=0, relwidth=0.5, relheight=0.5)
 frame2_label = tk.Label(frame2, text="", padx=10, pady=10)
 frame2_label.pack()
 
-frame3 = tk.Frame(root, bg="#7e99dd")
+frame3 = tk.Frame(root, bg="#354d2b")
 frame3.place(relx=0, rely=0.5, relwidth=0.5, relheight=0.5)
 
 frame4 = tk.Frame(root, bg="orange")
@@ -145,28 +142,33 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 # Crea un widget Label per visualizzare l'immagine meteo
 label = tk.Label(root)
 label.pack()
-label.place(relx=0.25,rely=0.16,anchor='center')
+label.place(relx=0.25, rely=0.16, anchor='center')
+
+# Carica l'immagine locale
+local_image = Image.open("/home/pi/Desktop/Humi-Soil-main/Documentazione/Logo.png")
+local_tk_image = ImageTk.PhotoImage(local_image)
+
+# Crea un widget Label per visualizzare l'immagine locale
+local_image_label = tk.Label(root, image=local_tk_image)
+local_image_label.place(x=5, y=525)  # Place the local image label at the top-left corner
 
 # Crea un pulsante Tkinter per generare il numero casuale con l'orario
 random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_and_save_random_number_with_time)
-random_button.pack()
+random_button.place(x=20, y=760)
 
+label_history = tk.Label(root, text="")
+label_history.pack()
+label_history.place(relx=0.75, rely=1.25, anchor='center')
 
-# Crea una scrollbar
-scrollbar = tk.Scrollbar(root)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-# Crea un widget Text per visualizzare il contenuto del file
-text_box = tk.Text(root, yscrollcommand=scrollbar.set)
-text_box.pack()
-
-# Configura la scrollbar
-scrollbar.config(command=text_box.yview)
-
+# Crea un widget Label per visualizzare l'immagine meteo del forecast
+label_forecast = tk.Label(root)
+label_forecast.pack()
+label_forecast.place(relx=0.75, rely=0.16, anchor='center')
 
 
 # Organizzazione dei widget nella finestra
 get_weather("Milan")  # Chiamata iniziale per ottenere i dati meteo di Milano
 
 # Avvia il loop principale di Tkinter
+root.update_idletasks()  # Force an update of the GUI
 root.mainloop()
