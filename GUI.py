@@ -19,6 +19,7 @@ def generate_and_save_random_number_with_time():
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
     file_path = "/home/pi/Desktop/Humi-Soil-main/numeri_casuali.txt"
     
+    
     # Scrive il numero casuale e l'orario nel file
     with open("numeri_casuali.txt", "a") as file:
         file.write(f"{formatted_time}: {random_number}\n")
@@ -33,9 +34,15 @@ def generate_and_save_random_number_with_time():
     try:
         with open("numeri_casuali.txt", "r") as file:
             content = file.read()
-            label_history.config(text=content)
+            text_box.config(state=tk.NORMAL)
+            text_box.delete(1.0, tk.END)
+            text_box.insert(tk.END, content)
+            text_box.config(state=tk.DISABLED)
     except FileNotFoundError:
-        label_history.config(text="File not found")
+        text_box.config(state=tk.NORMAL)
+        text_box.delete(1.0, tk.END)
+        text_box.insert(tk.END, "File not found")
+        text_box.config(state=tk.DISABLED)
 
 # Crea una finestra Tkinter
 root = tk.Tk()
@@ -142,7 +149,7 @@ frame4.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.5)
 # Crea un widget Label per visualizzare l'immagine meteo
 label = tk.Label(root)
 label.pack()
-label.place(relx=0.25, rely=0.16, anchor='center')
+label.place(relx=0.25, rely=0.15, anchor='center')
 
 # Carica l'immagine locale
 local_image = Image.open("/home/pi/Desktop/Humi-Soil-main/Documentazione/Logo.png")
@@ -156,9 +163,18 @@ local_image_label.place(x=5, y=525)  # Place the local image label at the top-le
 random_button = tk.Button(root, text="Genera Numero Casuale", command=generate_and_save_random_number_with_time)
 random_button.place(x=20, y=760)
 
-label_history = tk.Label(root, text="")
-label_history.pack()
-label_history.place(relx=0.75, rely=1.25, anchor='center')
+# Crea una scrollbar
+scrollbar = tk.Scrollbar(root)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+# Crea un widget Text per visualizzare il contenuto del file
+text_box = tk.Text(root, width=40, height=10, yscrollcommand=scrollbar.set)
+text_box.pack()
+text_box.place(relx=0.75,rely=0.75,anchor='center')
+
+# Configura la scrollbar
+scrollbar.config(command=text_box.yview)
+
+
 
 # Crea un widget Label per visualizzare l'immagine meteo del forecast
 label_forecast = tk.Label(root)
